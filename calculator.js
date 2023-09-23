@@ -35,15 +35,28 @@ keys.addEventListener('click', e => {
         } else {
           display.textContent = displayedNum + keyContent
         }
+        calculator.dataset.previousKeyType = 'number'
       }
 
-    if (
+      if (
         action === 'add' ||
         action === 'subtract' ||
         action === 'multiply' ||
         action === 'divide'
       ) {
-        key.classList.add('is-depressed')
+        const firstValue = calculator.dataset.firstValue
+        const operator = calculator.dataset.operator
+        const secondValue = displayedNum
+        
+      // Note: It's sufficient to check for firstValue and operator because secondValue always exists
+      if (
+        firstValue &&
+        operator &&
+        previousKeyType !== 'operator'
+      ) {
+        display.textContent = calculate(firstValue, operator, secondValue)
+        }
+      key.classList.add('is-depressed')
         calculator.dataset.previousKeyType = 'operator'
         calculator.dataset.firstValue = displayedNum
         calculator.dataset.operator = action
@@ -52,11 +65,15 @@ keys.addEventListener('click', e => {
     if (action === 'decimal') {
         if (!displayedNum.includes('.')) {
           display.textContent = displayedNum + '.'
+        } else if (previousKeyType === 'operator') {
+          display.textContent = '0.'
         }
+        calculator.dataset.previousKeyType = 'decimal'
       }
       
     if (action === 'clear') {
         display.textContent = '0'
+        calculator.dataset.previousKeyType = 'clear'
       }
       
     if (action === 'calculate') {
